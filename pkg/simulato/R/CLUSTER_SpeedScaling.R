@@ -1,10 +1,14 @@
 # M/M/N-type Cluster model
-lambda=0.004556832
-mu=4.801795000000E-08
+#lambda=0.004556832
+lambda = 0.004638794
+#mu=4.801795000000E-08
+mu = 4.697978e-08
 N=8
-p=rep(1/8,8)
-pA=0#1
-pD=1#0.8062846
+#p=rep(1/8,8)
+p = c(0.130, 0.128, 0.130, 0.134, 0.115, 0.122, 0.107, 0.134)
+pA=1
+#pD=0.8062846
+pD = 0.821
 speed=c(144531.85762576,313327.619175194)
 
 
@@ -62,7 +66,7 @@ start_clocks <- function(sp, new_events) {# here we need to process the clocks b
   return(rexp(length(new_events),rate=ifelse(new_events==N+1,lambda,mu)))
 }
 performance <- function(sp) {# what is the model performance measured at given point
-  #(sum(sp$state[1:(N+1)]>0)+sp$state[N+2]==0) # probabilities
-  #sum(sp$state[1:(N+2)])==0 # prob of idle
-  sum(sp$state[1:(N+1)]>0)+sp$state[N+2]
+  (sum(sp$state[1:(N+1)]>0)+sp$state[N+2]==WHATTO) # probabilities
+  #sum(sp$state[1:(N+2)])==1 # prob of idle
+  #sum(sp$state[1:(N+1)]>0)+sp$state[N+2]
 }

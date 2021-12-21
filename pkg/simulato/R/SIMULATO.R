@@ -8,7 +8,7 @@ reg_est=function(sumY,sumSqY,sumZ,sumSqZ,sumYZ,n,alpha){
   sq11=sumSqY/(n-1)-sumY^2/(n*(n-1)) # variance of Y
   sq22=sumSqZ/(n-1)-sumZ^2/(n*(n-1)) # variance of Z
   sq12=sumYZ/(n-1)-sumY*sumZ/(n*(n-1)) # covariance of YZ
-  s2=sq11-2*est*sq12+est^2*sq22 # variance esitmate for Y-est*Z
+  s2=sq11-2*est*sq12+est^2*sq22 # variance estimate for Y-est*Z
   s=sqrt(s2) # squared deviation of the same
   EZ=sum(sumZ)/n # mean regenerative period length
   Kalpha=qnorm(1-alpha/2) # normal distribution quantile
@@ -35,14 +35,12 @@ trace <- function(num_steps=1e5, stop_time=Inf, # default values: 10^5 iteration
     dt <- min(times) # time to the next state transition
     events <- which(times-dt<tol) # trigger event set
     
-    # here we also need to grab some statistics
-    # regenerative estimation here?: TODO
     perf_ta <- perf_ta+performance(sp)*dt # accumulating time average statistics
     # performing the transition and updating the point
     sim_t <- sim_t+dt                     # updating the time
     sim_n <- sim_n+1                      # updating point number
     
-    if(is_regeneration(sp)) {
+    if(is_regeneration(sp)) { # performing regenerative estimation
       sumY <- sumY + perf_ta
       sumSqY <- sumSqY + perf_ta^2
       sumZ <- sumZ + sim_t
@@ -63,25 +61,22 @@ trace <- function(num_steps=1e5, stop_time=Inf, # default values: 10^5 iteration
     n_sp$clocks[p_events] <- sp$clocks[p_events]-dt*sp$rates[p_events] # updated clocks for previously active events
     n_sp$clocks[events] <- 0 # events that happened, clocks are zero - this is just to avoid small non-zero values
     if(length(n_events)>0)
-      n_sp$clocks[n_events] <- start_clocks(n_sp,n_events)
+      n_sp$clocks[n_events] <- start_clocks(n_sp,n_events) # start the clocks anew for the new events
 
-    # taking care of rates
-    n_sp$rates <- update_rates(n_sp)
+    n_sp$rates <- update_rates(n_sp) # taking care of rates
     n_sp$rates[i_events] <- 0 # zeroing rates
-    sp <- n_sp
+    sp <- n_sp # switch the state to new one
   }
-
-  #perf_ta <- perf_ta / sim_t
   return(reg_est(sumY,sumSqY,sumZ,sumSqZ,sumYZ,reg_n,alpha))
 }
 
-
 ############################################################################ BELOW HAS TO BE SET UP FOR EACH MODEL
 
-#setwd("~/projects/simulato/pkg/simulato/R/")
-#setwd("~/Desktop/R/SIMULATO/")
-#setwd("/home/ar0/Seafile/My Library/R/SIMULATO")
+setwd("~/Desktop-WORK/R/SIMULATO/simulato/pkg/simulato/R")
 
-source("CLUSTER_SpeedScaling.R")
+source("CLUSTER_SpeedScaling2.R")
 
-(trace(num_steps = 1000, stop_time = Inf, simpoint_init,update_state,active_events, start_clocks,update_rates,is_regeneration,performance))
+Stat=matrix(0,nrow = 11,ncol=3)
+for(WHATTO in 0:10)
+  Stat[WHATTO+1,]=
+  trace(num_steps = 1000000, stop_time = Inf, simpoint_init,update_state,active_events, start_clocks,update_rates,is_regeneration,performance)
