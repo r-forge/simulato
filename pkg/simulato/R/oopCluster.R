@@ -18,16 +18,16 @@ mmcluster <- function(gl=list(N=1,
   return(m)
 }
 
-isRegeneration.gsmp <- function(m) {
+isRegeneration.mmcluster <- function(m) {
   return(m$state[m$gl$N+1]==0 & m$state[m$gl$N+2]==2)
 }
-getPerformance.gsmp <- function(m){# what is the model performance measured at given point
+getPerformance.mmcluster <- function(m){# what is the model performance measured at given point
   #sapply(0:10,function(i) m$state[m$gl$N+1]==i) # probabilities
   #sum(sp$state[1:(N+2)])==1 # prob of idle
   m$state[m$gl$N+1]
   #sum(sp$state[1:(N+1)]>0)+sp$state[N+2]
 }
-getRates.gsmp <- function(m){
+getRates.mmcluster <- function(m){
   r <- rep(0,m$gl$N+1)
   r[getActiveEvents(m)] <- m$gl$speed[m$state[m$gl$N+2]]
   r[m$gl$N+1]=1
