@@ -72,11 +72,11 @@ trace <- function(num_steps=1e5, stop_time=Inf, # default values: 10^5 iteration
 
 ############################################################################ BELOW HAS TO BE SET UP FOR EACH MODEL
 
-setwd("~/Desktop-WORK/R/SIMULATO/simulato/pkg/simulato/R")
-
-source("CLUSTER_SpeedScaling2.R")
+source("~/Desktop-WORK/R/SIMULATO/simulato/pkg/simulato/R/CLUSTER_SpeedScaling2.R")
 
 Stat=matrix(0,nrow = 11,ncol=3)
 for(WHATTO in 0:10)
   Stat[WHATTO+1,]=
-  trace(num_steps = 1000000, stop_time = Inf, simpoint_init,update_state,active_events, start_clocks,update_rates,is_regeneration,performance)
+  trace(num_steps = 100000, stop_time = Inf, simpoint_init,update_state,active_events, start_clocks,update_rates,is_regeneration,performance)
+
+write.csv(Stat,"ar0stat.csv")
