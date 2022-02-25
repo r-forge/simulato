@@ -10,6 +10,9 @@ reg_est <- function(arguments, alpha) {
     print("error in function arguments")
     return(NA)
   }
+  # stopifnot(length(arguments) == 7)
+  # stopifnot(all(sapply(arguments, is.numeric)))
+
   n <- arguments$n
   est <- arguments$sumY / arguments$sumZ # point estimate
   sq11 <- arguments$sumSqY / (n - 1) - arguments$sumY^2 / (n * (n - 1)) # variance of Y
@@ -85,7 +88,7 @@ trace <- function(num_steps = 1e5, stop_time = Inf, # default values: 10^5 itera
 
 ############################################################################ BELOW HAS TO BE SET UP FOR EACH MODEL
 
-# setwd("~/projects/simulato/pkg/simulato/R/")
+setwd("~/projects/simulato/pkg/simulato/R/")
 # setwd("~/Desktop/R/SIMULATO/")
 # setwd("/home/ar0/Seafile/My Library/R/SIMULATO")
 
@@ -96,7 +99,7 @@ cl <- makeCluster(nCores)
 registerDoParallel(cl)
 
 # building traces and combining statistics in parallel mode
-parallelResult <- foreach(i = 1:nThreads, .combine = cbind) %dopar% (trace(num_steps = 1000, stop_time = Inf, simpoint_init, update_state, active_events, start_clocks, update_rates, is_regeneration, performance))
+parallelResult <- foreach(i = 1:nThreads, .combine = cbind) %dopar% (trace(num_steps = 100000, stop_time = Inf, simpoint_init, update_state, active_events, start_clocks, update_rates, is_regeneration, performance))
 
 stopCluster(cl)
 

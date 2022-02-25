@@ -20,7 +20,8 @@ Description:This project aims to develop methods of applied probability for disc
             can be obtained by means of confidence estimation using regenerative 
             processes.
 Imports: 
-License: 
+  stats (>= 4.0.4)
+License: BSD_3_clause
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)

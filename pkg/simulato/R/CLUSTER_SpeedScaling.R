@@ -17,7 +17,7 @@ is_regeneration <- function(sp){
 }
 
 # state: 1:N - number of servers requested by ith oldest customer being served (if any), or zero; N+1: servers requested by first customer in the queue; N+2: queue size (if any); N+3: speed
-# clock: if i=1:N is served, then time of service, N+1: time to arrival 
+# clock: if i=1:N is served, then time of service, N+1: time to arrival
 simpoint_init <- function(){ # here we need to initialize the simulation
   list(state=c(1,rep(0,N+1),2),
        clocks=c(rexp(1,rate=mu),rep(0,N-1),rexp(1,lambda)),
@@ -30,7 +30,7 @@ update_state <- function(sp,events){   # here we need to switch the state based 
     else{
       customer_class=sample(1:N,size=1,prob=p)
       if(sum(s[1:N])+customer_class<=N) s[which.min(s[1:N])]=customer_class # to servers, if available
-      else s[N+1]=customer_class # to queue otherwise  
+      else s[N+1]=customer_class # to queue otherwise
     }
     s[N+3]=ifelse(runif(1)<=pA,2,s[N+3])
   }
@@ -66,7 +66,7 @@ start_clocks <- function(sp, new_events) {# here we need to process the clocks b
   return(rexp(length(new_events),rate=ifelse(new_events==N+1,lambda,mu)))
 }
 performance <- function(sp) {# what is the model performance measured at given point
-  (sum(sp$state[1:(N+1)]>0)+sp$state[N+2]==WHATTO) # probabilities
+  (sum(sp$state[1:(N+1)]>0)+sp$state[N+2]==0) # probabilities
   #sum(sp$state[1:(N+2)])==1 # prob of idle
   #sum(sp$state[1:(N+1)]>0)+sp$state[N+2]
 }
