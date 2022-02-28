@@ -1,3 +1,7 @@
+#' @importFrom stats qnorm
+#' @importFrom stats rexp
+#' @importFrom stats runif
+#'
 statacc <- function(l=list(sumY=0,
                            sumSqY=0,
                            sumZ=0,
@@ -27,7 +31,20 @@ inc.statacc <- function(a,rdp,rdt){
                       nReg=a$nReg + 1)))
 }
 
+#' estimation function
+#'
+#' @param a list of accumulated parameters
+#' @param alpha list of added parameters
+#' @return numeric vector of the point estimates
+#' @export
 getRegEst <- function(a,alpha) UseMethod("getRegEst",a)
+
+#' estimation function
+#'
+#' @param a list of accumulated parameters
+#' @param alpha list of added parameters
+#' @return numeric vector of the point estimates
+#' @export
 getRegEst.statacc <- function(a,alpha=0.05){
   stopifnot(class(a)=="statacc",is.numeric(alpha))
   n <- a$nReg
@@ -43,10 +60,14 @@ getRegEst.statacc <- function(a,alpha=0.05){
   return(cbind(lbound, est, rbound))
 }
 
+#' structure GSMP model
+#'
+#' @return structure
+#' @export
 gsmp <- function() {
   structure(list(state=numeric(),
                  clocks=numeric(),
-                 gl=list()), 
+                 gl=list()),
             class="gsmp")
 }
 
@@ -55,7 +76,21 @@ isRegeneration <- function(m) UseMethod("isRegeneration",m)
 getPerformance <- function(m) UseMethod("getPerformance",m)
 getRates <- function(m) UseMethod("getRates",m)
 getNewGSMP <- function(m,e) UseMethod("getNewGSMP",m)
+
+#' get active events
+#'
+#' @param m model queueing system
+#' @return list of active events
+#' @export
 getActiveEvents <- function(m) UseMethod("getActiveEvents",m)
+
+
+#' get new clocks
+#'
+#' @param m model queueing system
+#' @param e list of events
+#' @return list of new clocks
+#' @export
 getNewClocks <- function(m, e) UseMethod("getNewClocks",m)
 
 getTimeDiff <- function(m) UseMethod("getTimeDiff",m)
@@ -71,7 +106,7 @@ step.gsmp <- function(m){
   a_events <- getActiveEvents(nm) # active events for new state
   #i_events <- setdiff(p_events, a_events) # interrupted events = remaining, but not old, these rates will be zero
   n_events <- union(setdiff(a_events, p_events), intersect(a_events, events)) # new events that need clock start
-  
+
   nm$clocks[p_events] <- m$clocks[p_events] - dt * getRates(m)[p_events] # updated clocks for previously active events
   nm$clocks[events] <- 0 # events that happened, clocks are zero - this is just to avoid small non-zero values
   if (length(n_events) > 0) {
@@ -83,7 +118,41 @@ step.gsmp <- function(m){
   #nm$rates[i_events] <- 0 # zeroing rates
 }
 
-trace <- function(m, numSteps, stopTime) UseMethod("trace",m)
+#' building trace
+#'
+#' @param m model queueing system
+#' @param numSteps amount arrival customers
+#' @param stopTime modeling time
+#' @return numeric list of the accumulated parameters
+#' @export
+trace <- function(m, numSteps, stopTime) UseMethod("trace")
+
+trace.default <- function(m, numSteps = 1e5, stopTime = Inf) {
+  rdp <- rdt <- dn <- gt <- 0 # dp, rdt, dn - deltas of performance, time and number of steps between regenerations; gt - global time
+  s <- statacc() # initialize the accumulator
+  while (gt < stopTime & dn < numSteps) { # stopping condition
+    # In a Generalized Semi-Markov Process the decrease rates of the clocks are constant (various for different clocks) depending on the current state
+    dt <- getTimeDiff(m) # time to the next state transition
+    rdp <- rdp + getPerformance(m) * dt # accumulating time average statistics
+    rdt <- rdt + dt # updating the time
+    dn <- dn + 1 # updating point number
+    gt <- gt + dt # updating global simulation time
+    if (isRegeneration(m)) {
+      s <- inc(s,rdp,rdt) # accumulate the cycles in the accumulator
+      rdp <- rdt <- 0 # reset the inter-cycle statistics
+    }
+    nm <- step(m)
+    m <- nm
+  }
+  return(s)
+}
+#' building trace for GSMP
+#'
+#' @param m model queueing system
+#' @param numSteps amount arrival customers
+#' @param stopTime modeling time
+#' @return numeric list of the accumulated parameters
+#' @export
 trace.gsmp <- function(m, numSteps = 1e5, stopTime = Inf) { # performance calculating function per point
   rdp <- rdt <- dn <- gt <- 0 # dp, rdt, dn - deltas of performance, time and number of steps between regenerations; gt - global time
   s <- statacc() # initialize the accumulator
@@ -98,7 +167,7 @@ trace.gsmp <- function(m, numSteps = 1e5, stopTime = Inf) { # performance calcul
       s <- inc(s,rdp,rdt) # accumulate the cycles in the accumulator
       rdp <- rdt <- 0 # reset the inter-cycle statistics
     }
-    nm <- step(m) 
+    nm <- step(m)
     m <- nm
   }
   return(s)
