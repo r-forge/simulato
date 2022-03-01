@@ -72,7 +72,7 @@ trace <- function(num_steps=1e5, stop_time=Inf, # default values: 10^5 iteration
 
 ############################################################################ BELOW HAS TO BE SET UP FOR EACH MODEL
 
-source("~/Desktop-WORK/R/SIMULATO/simulato/pkg/simulato/R/CLUSTER_SpeedScaling2.R")
+#source("~/Desktop-WORK/R/SIMULATO/simulato/pkg/simulato/R/CLUSTER_SpeedScaling2.R")
 
 Stat=matrix(0,nrow = 11,ncol=3)
 for(WHATTO in 0:10)
