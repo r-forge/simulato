@@ -1,3 +1,28 @@
+#' model M/M/n
+#'
+#' @return constructor of the model
+#' @param gl list of model parameters
+#' @export
+#' 
+mmcluster <- function(gl = list(N=1,
+                                lambda = 1,
+                                mu = 2,
+                                p=1,
+                                pA=1,
+                                pD = 0,
+                                speed=c(1,1)
+)) {
+  m <- gsmp()
+  m$gl <- gl
+  class(m) <- append(class(m), "mmcluster")
+  
+  m$state <- c(1, rep(Inf, m$gl$N - 1), 1, 1)
+  m$clocks <- rep(Inf, m$gl$N + 1)
+  m$clocks[getActiveEvents(m)] <- getNewClocks(m, getActiveEvents(m))
+  
+  return(m)
+}
+
 isRegeneration.mmcluster <- function(m) {
   return(m$state[m$gl$N+1]==0 & m$state[m$gl$N+2]==2)
 }
