@@ -1,9 +1,9 @@
-#' model M/M/n
+
+#' model MMn
 #'
-#' @return constructor of the model
 #' @param gl list of model parameters
+#' @return constructor of the model
 #' @export
-#' 
 mmcluster <- function(gl = list(N=1,
                                 lambda = 1,
                                 mu = 2,
