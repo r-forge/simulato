@@ -127,25 +127,6 @@ step.gsmp <- function(m){
 #' @export
 trace <- function(m, numSteps, stopTime) UseMethod("trace")
 
-trace.default <- function(m, numSteps = 1e5, stopTime = Inf) {
-  rdp <- rdt <- dn <- gt <- 0 # dp, rdt, dn - deltas of performance, time and number of steps between regenerations; gt - global time
-  s <- statacc() # initialize the accumulator
-  while (gt < stopTime & dn < numSteps) { # stopping condition
-    # In a Generalized Semi-Markov Process the decrease rates of the clocks are constant (various for different clocks) depending on the current state
-    dt <- getTimeDiff(m) # time to the next state transition
-    rdp <- rdp + getPerformance(m) * dt # accumulating time average statistics
-    rdt <- rdt + dt # updating the time
-    dn <- dn + 1 # updating point number
-    gt <- gt + dt # updating global simulation time
-    if (isRegeneration(m)) {
-      s <- inc(s,rdp,rdt) # accumulate the cycles in the accumulator
-      rdp <- rdt <- 0 # reset the inter-cycle statistics
-    }
-    nm <- step(m)
-    m <- nm
-  }
-  return(s)
-}
 #' building trace for GSMP
 #'
 #' @param m model queueing system
