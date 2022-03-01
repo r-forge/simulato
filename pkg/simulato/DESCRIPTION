@@ -1,6 +1,6 @@
 Package: simulato
 Title: Simulation framework for GSM processes
-Version: 0.0.0.0
+Version: 0.0.0.1
 URL: https://r-forge.r-project.org/scm/?group_id=2436
 Authors@R: 
     c(person(given = "Alexander",
@@ -19,9 +19,8 @@ Description:This project aims to develop methods of applied probability for disc
             are taken as the basic tool, and performance of the system under study
             can be obtained by means of confidence estimation using regenerative 
             processes.
-Imports: 
-  stats (>= 4.0.4)
-License: BSD_3_clause
+Imports: stats, foreach, doParallel, parallel
+License: BSD_3_clause + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
