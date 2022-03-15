@@ -5,22 +5,18 @@
 # clock: if i=1:N is served, then time of service, N+1: time to arrival 
 # by default, it is an M/M/1 model with rho=0.5
 mmcluster <- function(gl=list(N=1,
-                      lambda = 1,
-                      mu = 2,
-                      p=1,
-                      pA=1,
-                      pD = 0,
-                      speed=c(1,1))) {
+                              lambda = 1,
+                              mu = 2,
+                              p=1,
+                              pA=1,
+                              pD = 0,
+                              speed=c(1,1))) {
   m=gsmp()
   class(m) <- append(class(m),"mmcluster")
   m$state <- c(1,rep(Inf,gl$N-1),1,1)
   m$gl <- gl
-  class(m) <- append(class(m), "mmcluster")
-  
-  m$state <- c(1, rep(Inf, m$gl$N - 1), 1, 1)
-  m$clocks <- rep(Inf, m$gl$N + 1)
-  m$clocks[getActiveEvents(m)] <- getNewClocks(m, getActiveEvents(m))
-  
+  m$clocks <- rep(Inf,gl$N+1)
+  m$clocks[getActiveEvents(m)] <- getNewClocks(m,getActiveEvents(m))
   return(m)
 }
 
@@ -75,23 +71,10 @@ getNewGSMP.mmcluster <- function(m,e){
   }
   return(nm)
 }
-
-#' get active events
-#'
-#' @param m model queueing system
-#' @return list of active events
-#' @export
 getActiveEvents.mmcluster <- function(m){
   if(m$state[m$gl$N+1]>0) return(c(which(cumsum(m$state[1:m$gl$N])<=m$gl$N),m$gl$N+1))
   return(m$gl$N+1)
 }
-
-#' get new clocks
-#'
-#' @param m model queueing system
-#' @param e list of events
-#' @return list of new clocks
-#' @export
 getNewClocks.mmcluster <- function(m, e)  {# here we need to process the clocks based on the new events (their numbers)
   return(rexp(length(e),rate=ifelse(e==m$gl$N+1,m$gl$lambda, m$gl$mu[m$state[e]])   ))
 }
