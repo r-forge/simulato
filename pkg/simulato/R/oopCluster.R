@@ -4,15 +4,14 @@
   #        N+1: servers requested by first customer in the queue; N+2: queue size (if any); N+3: speed
   # clock: if i=1:N is served, then time of service, N+1: time to arrival 
   # by default, it is an M/M/1 model with rho=0.5
-  mmcluster <- function(gl=list(N=1,
-                                lambda = 1,
-                                mu = 2,
+  cluster <- function(gl=list(N=1,
                                 p=1,
                                 pA=1,
+                                cr=list(lambda=0.5,mu=1),
                                 pD = 0,
                                 speed=c(1,1))) {
     m=gsmp()
-    class(m) <- append(class(m),"mmcluster")
+    class(m) <- append(class(m),"cluster")
     m$state <- c(1,rep(0,gl$N-1),0,0,1)
     m$gl <- gl
     m$clocks <- rep(Inf,gl$N+1)
@@ -20,24 +19,24 @@
     return(m)
   }
   
-  isRegeneration.mmcluster <- function(m) {
+  isRegeneration.cluster <- function(m) {
     return(sum(m$state[1:(m$gl$N+2)])==0 & m$state[m$gl$N+3]==2)
   }
-  getPerformance.mmcluster <- function(m){# what is the model performance measured at given point
-    #sapply(0:10,function(i) sum(m$state[1:(m$gl$N+1)]>0)+m$state[m$gl$N+2]==i) # probabilities
-    sum(m$state[1:(m$gl$N+1)]>0)+m$state[m$gl$N+2] # number of customers in the system
+  getPerformance.cluster <- function(m){# what is the model performance measured at given point
+    sapply(0:10,function(i) sum(m$state[1:(m$gl$N+1)]>0)+m$state[m$gl$N+2]==i) # probabilities
+    #sum(m$state[1:(m$gl$N+1)]>0)+m$state[m$gl$N+2] # number of customers in the system
     #nothing serious below
     #cumsumServers = cumsum(m$state[1:m$gl$N])
     #nBusyServers = max(cumsumServers[which(cumsumServers<=m$gl$N)],0)
     #return(ifelse(m$state[m$gl$N+2] == 1, ifelse(nBusyServers == 0, m$gl$pIdle[1],  m$gl$pLow[nBusyServers]), ifelse(nBusyServers == 0, m$gl$pIdle[2], m$gl$pHigh[nBusyServers])))
   }
-  getRates.mmcluster <- function(m){
+  getRates.cluster <- function(m){
     r <- rep(0,m$gl$N+1)
     r[getActiveEvents(m)] <- m$gl$speed[m$state[m$gl$N+3]]
     r[m$gl$N+1]=1
     return(r)
   }
-  getNewGSMP.mmcluster <- function(m,e){
+  getNewGSMP.cluster <- function(m,e){
     N=m$gl$N
     p=m$gl$p
     pA=m$gl$pA
@@ -70,25 +69,34 @@
     }
     return(nm)
   }
-  getActiveEvents.mmcluster <- function(m){
+  getActiveEvents.cluster <- function(m){
     if(sum(m$state[1:m$gl$N])>0) return(c(which(m$state[1:m$gl$N]>0),m$gl$N+1))
     return(m$gl$N+1)
   }
-  getNewClocks.mmcluster <- function(m, e)  {# here we need to process the clocks based on the new events (their numbers)
-    return(rexp(length(e),rate=ifelse(e==m$gl$N+1,m$gl$lambda, m$gl$mu[m$state[e]])   ))
+  getNewClocks.cluster <- function(m, e)  {# here we need to process the clocks based on the new events (their numbers)
+    #return(rexp(length(e),rate=ifelse(e==m$gl$N+1,m$gl$cr$lambda, m$gl$cr$mu[m$state[e]])   ))
+    return(ifelse(e==m$gl$N+1,rexp(length(e),rate=m$gl$cr$lambda),m$gl$cr$x0[e]*runif(length(e))^(-1/m$gl$cr$alpha[e])))
   }
   
-  #  m=mmcluster(list(N=8,
-  #            lambda = 0.004638794,
-  #            mu = rep(4.697978e-08,8),
+  #  m=cluster(list(N=8,
+  #            cr=list(lambda = 0.004638794, mu = rep(4.697978e-08,8)),
   #            p=rep(1/8,8),
   #            pA=1,
   #            pD = 0.821,
   #            speed=c(144531.85762576,313327.619175194)
   #            ))
   # 
-  # plot(getRegEst(trace(m,10000))[,"est"])
+  #plot(getRegEst(trace(m,10000))[,"est"])
+  m=cluster(list(N=8,
+             cr=list(lambda = 0.004829525, x0 = rep(15848932,8), alpha=rep(2.5,8)),
+             p=rep(1/8,8),
+             pA=0.8,
+             pD = 0.8,
+             speed=c(146894.431400289,322042.540508258)
+             ))
+
+  plot(getRegEst(trace(m,10000))[,"est"])
   
   # below there is a checker, just to see that it is working
-  m=mmcluster()
-  getRegEst(trace(m,100000)) # should give approx. 1
+  #m=cluster()
+  #getRegEst(trace(m,100000)) # should give approx. 1
