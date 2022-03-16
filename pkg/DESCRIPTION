@@ -1,0 +1,27 @@
+Package: simulato
+Title: Simulation framework for GSM processes.
+Version: 0.0.0.0
+URL: https://r-forge.r-project.org/scm/?group_id=2436
+Authors@R: 
+    c(person(given = "Alexander",
+           family = "Rumyantsev",
+           role = c("cre"),
+           email = "ar0@krc.karelia.ru",
+           comment = c(ORCID = "https://orcid.org/0000-0003-2364-5939")),
+      person(given = "Sergey",
+           family = "Astaf'ev",
+           role = c("aut", "ctb"),
+           email = "seryymail@mail.ru",
+           comment = c(ORCID = "https://orcid.org/0000-0002-4486-798X"))
+           )
+Description:This project aims to develop methods of applied probability for discrete 
+            event simulation of stochastic systems. Generalized semi-Markov processes
+            are taken as the basic tool, and performance of the system under study
+            can be obtained by means of confidence estimation using regenerative 
+            processes.
+Imports: 
+License: 
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
