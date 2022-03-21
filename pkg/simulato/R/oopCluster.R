@@ -78,15 +78,6 @@
     return(ifelse(e==m$gl$N+1,rexp(length(e),rate=m$gl$cr$lambda),m$gl$cr$x0[e]*runif(length(e))^(-1/m$gl$cr$alpha[e])))
   }
   
-  #  m=cluster(list(N=8,
-  #            cr=list(lambda = 0.004638794, mu = rep(4.697978e-08,8)),
-  #            p=rep(1/8,8),
-  #            pA=1,
-  #            pD = 0.821,
-  #            speed=c(144531.85762576,313327.619175194)
-  #            ))
-  # 
-  #plot(getRegEst(trace(m,10000))[,"est"])
   m=cluster(list(N=8,
              cr=list(lambda = 0.004829525, x0 = rep(15848932,8), alpha=rep(2.5,8)),
              p=rep(1/8,8),
