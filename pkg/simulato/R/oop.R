@@ -74,7 +74,14 @@ gsmp <- function() {
 # these generic functions should be defined for any child of the gsmp class and depend on the model
 isRegeneration <- function(m) UseMethod("isRegeneration",m)
 getPerformance <- function(m) UseMethod("getPerformance",m)
+
+#' get rates
+#'
+#' @param m model queueing system
+#' @return numeric vector of rates
+#' @export
 getRates <- function(m) UseMethod("getRates",m)
+
 getNewGSMP <- function(m,e) UseMethod("getNewGSMP",m)
 
 #' get active events
