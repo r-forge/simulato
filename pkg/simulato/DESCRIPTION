@@ -1,6 +1,6 @@
 Package: simulato
 Title: Simulation framework for GSM processes
-Version: 0.0.0.2
+Version: 0.0.0.3
 URL: https://r-forge.r-project.org/scm/?group_id=2436
 Authors@R: 
     c(person(given = "Alexander",
