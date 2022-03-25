@@ -17,7 +17,19 @@ statacc <- function(l=list(sumY=0,
   structure(l,class="statacc")
 }
 
+#' add two statacc 
+#' 
+#' @param a first item
+#' @param b second item
+#' @return sum
+#' @export
 add <- function(a,b) UseMethod("add",a,b)
+#' add two statacc 
+#' 
+#' @param a first item
+#' @param b second item
+#' @return sum
+#' @export
 add.statacc <- function(a,b){
   return(statacc(list(sumY=a$sumY + b$sumY,
                       sumSqY=a$sumSqY + b$sumSqY,
